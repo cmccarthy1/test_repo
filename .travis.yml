@@ -7,22 +7,11 @@ stage:
 
 jobs:
   include:
-    # LINUX BUILD
+    # LINUX/OSX BUILD
     - stage: build Release
-      os: linux
-      script:
-        tar -zcvf prom-exporter-$TRAVIS_OS_NAME-$TRAVIS_BRANCH.tgz README.md *.q example/
-      deploy:
-        provider: releases
-        api_key: "$GITHUB_APIKEY"
-        file: prom-exporter-TRAVIS_OS_NAME-$TRAVIS_BRANCH.tgz
-        on:
-          tags: true
-        skip_cleanup: 'true'
-
-    # OSX BUILD
-    - stage: build Release
-      os: osx
+      os:
+      - linux
+      - osx
       script:
         tar -zcvf prom-exporter-$TRAVIS_OS_NAME-$TRAVIS_BRANCH.tgz README.md *.q example/
       deploy:
