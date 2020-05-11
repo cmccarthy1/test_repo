@@ -20,7 +20,10 @@ deploy:
   provider: releases
   api_key: "$GITHUB_APIKEY"
   file_glob: true
-  file: $TRAVIS_OS_NAME-$TRAVIS_BRANCH.tgz
+  if os = linux or os = osx
+    file: prom-exporter-$TRAVIS_OS_NAME-$TRAVIS_BRANCH.tgz
+  else
+    file: prom-exporter-$TRAVIS_OS_NAME-$TRAVIS_BRANCH.zip
   skip_cleanup: true
   on:
     tags: true
