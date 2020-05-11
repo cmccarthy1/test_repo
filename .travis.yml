@@ -8,11 +8,11 @@ git:
 
 script:
 - echo "Preparing version $TRAVIS_BRANCH-$TRAVIS_COMMIT"
-if os = linux or os = osx
-  - tar -zcvf prom-exporter-$TRAVIS_OS_NAME-$TRAVIS_BRANCH.tgz README.md *.q example/ 
-else
-  - 7z a -r prom-exporter-$TRAVIS_OS_NAME-$TRAVIS_BRANCH.zip README.md *.q example/
-fi
+- if [ $TRAVIS_OS_NAME = windows ]; then
+    7z a -tzip prom-exporter-$TRAVIS_OS_NAME-$TRAVIS_BRANCH.zip README.md *.q example;
+  else
+    tar -zcvf prom-exporter-$TRAVIS_OS_NAME-$TRAVIS_BRANCH.tgz README.md *.q example/;
+  fi
 
 - echo "Packaged as prom-exporter-$TRAVIS_OS_NAME-$TRAVIS_BRANCH.zip"
 
@@ -20,10 +20,7 @@ deploy:
   provider: releases
   api_key: "$GITHUB_APIKEY"
   file_glob: true
-  if os = linux or os = osx
-    file: prom-exporter-$TRAVIS_OS_NAME-$TRAVIS_BRANCH.tgz
-  else
-    file: prom-exporter-$TRAVIS_OS_NAME-$TRAVIS_BRANCH.zip
+  file: $TRAVIS_OS_NAME-$TRAVIS_BRANCH.tgz
   skip_cleanup: true
   on:
     tags: true
