@@ -4,8 +4,6 @@ compiler: gcc
 
 env:
   - FILE_ROOT="prometheus-exporter"
-  - FILE_TAIL_ZIP=".zip"
-  - FILE_TAIL_TAR=".tar"
 
 stage:
   - build Release
