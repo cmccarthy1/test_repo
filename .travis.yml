@@ -1,4 +1,7 @@
-os: linux
+os: 
+  - linux
+  - osx
+  - windows
 language: c
 compiler: gcc
 
@@ -11,10 +14,6 @@ stage:
 jobs:
   include:
     - stage: build Release
-      os:
-        - linux
-        - osx
-        - windows
       script:
         if [ "$TRAVIS_OS_NAME" == "windows" ]; then
           7z a -tzip $FILE_ROOT-$TRAVIS_OS_NAME-$TRAVIS_BRANCH.zip README.md q LICENSE examples;
