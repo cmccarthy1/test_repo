@@ -12,14 +12,15 @@ env:
         FILE_TAIL="zip";
       else
         FILE_TAIL="tgz";
-    - FNAME=$FILE_ROOT-$TRAVIS_OS_NAME-$TRAVIS_BRANCH.$FILE_TAIL 
+    - FILE_NAME=$FILE_ROOT-$TRAVIS_OS_NAME-$TRAVIS_BRANCH.$FILE_TAIL 
 
 script:
-  if [ "$TRAVIS_OS_NAME" == "windows" ]; then
-    7z a -tzip $FILE_NAME README.md q LICENSE examples;
-  else
-    tar  -zcvf $FILE_NAME README.md q LICENSE examples/;
-  fi
+  - echo $FILE_NAME
+  - if [ "$TRAVIS_OS_NAME" == "windows" ]; then
+      7z a -tzip $FILE_NAME README.md q LICENSE examples;
+    else
+      tar  -zcvf $FILE_NAME README.md q LICENSE examples/;
+    fi
 
 deploy:
   provider: releases
