@@ -20,6 +20,7 @@ jobs:
           7z a -tzip $FILE_ROOT-$TRAVIS_OS_NAME-$TRAVIS_BRANCH.zip README.md q LICENSE examples;
         else
           tar -zcvf $FILE_ROOT-$TRAVIS_OS_NAME-$TRAVIS_BRANCH.tgz README.md LICENSE q examples/;
+        fi;
       deploy:
         provider: releases
         api_key: "$GITHUB_APIKEY"
@@ -28,6 +29,7 @@ jobs:
             $FILE_ROOT-$TRAVIS_OS_NAME-$TRAVIS_BRANCH.zip;
           else
             $FILE_ROOT-$TRAVIS_OS_NAME-$TRAVIS_BRANCH.tgz;
+          fi;
         on:
           tags: true
         skip_cleanup: 'true'
