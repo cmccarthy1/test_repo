@@ -2,22 +2,37 @@ os: linux
 language: c
 compiler: gcc
 
+env:
+  global:
+    - FILE_ROOT = "prom-exporter"     # This defines the name at the front of the zipped filed
+
 stage:
   - build Release
 
 jobs:
   include:
-    # LINUX/OSX BUILD
+    # LINUX BUILD
     - stage: build Release
-      os:
-      - linux
-      - osx
+      os: linux
       script:
-        tar -zcvf prom-exporter-$TRAVIS_OS_NAME-$TRAVIS_BRANCH.tgz README.md *.q example/
+        tar -zcvf $FILE_ROOT-$TRAVIS_OS_NAME-$TRAVIS_BRANCH.tgz README.md LICENSE q examples/
       deploy:
         provider: releases
         api_key: "$GITHUB_APIKEY"
-        file: prom-exporter-$TRAVIS_OS_NAME-$TRAVIS_BRANCH.tgz
+        file: $FILE_ROOT-$TRAVIS_OS_NAME-$TRAVIS_BRANCH.tgz
+        on:
+          tags: true
+        skip_cleanup: 'true'
+
+    # OSX BUILD
+    - stage: build Release
+      os: osx
+      script:
+        tar -zcvf $FILE_ROOT-$TRAVIS_OS_NAME-$TRAVIS_BRANCH.tgz README.md q LICENSE examples/
+      deploy:
+        provider: releases
+        api_key: "$GITHUB_APIKEY"
+        file: $FILE_ROOT-$TRAVIS_OS_NAME-$TRAVIS_BRANCH.tgz
         on:
           tags: true
         skip_cleanup: 'true'
@@ -26,11 +41,11 @@ jobs:
     - stage: build Release
       os: windows
       script:
-        7z a -tzip prom-exporter-$TRAVIS_OS_NAME-$TRAVIS_BRANCH.zip README.md *.q example
+        7z a -tzip $FILE_ROOT-$TRAVIS_OS_NAME-$TRAVIS_BRANCH.zip README.md q LICENSE example
       deploy:
         provider: releases
         api_key: "$GITHUB_APIKEY"
-        file: prom-exporter-$TRAVIS_OS_NAME-$TRAVIS_BRANCH.zip
+        file: $FILE_ROOT-$TRAVIS_OS_NAME-$TRAVIS_BRANCH.zip
         on:
           tags: true
         skip_cleanup: 'true'
