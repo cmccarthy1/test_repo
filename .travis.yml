@@ -2,14 +2,13 @@ os: linux
 language: c
 compiler: gcc
 
-env:
-  global:
-    - FILE_ROOT = "prom-exporter"     # This defines the name at the front of the zipped filed
 
 stage:
   - build Release
 
 jobs:
+  before include:
+    - export FILE_ROOT = "prometheus-exporter"
   include:
     # LINUX BUILD
     - stage: build Release
