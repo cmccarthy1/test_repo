@@ -2,13 +2,13 @@ os: linux
 language: c
 compiler: gcc
 
+env:
+  - FILE_ROOT="prometheus-exporter"
 
 stage:
   - build Release
 
 jobs:
-  before include:
-    - export FILE_ROOT = "prometheus-exporter"
   include:
     # LINUX BUILD
     - stage: build Release
