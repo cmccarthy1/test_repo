@@ -30,8 +30,8 @@ before_install:
       mkdir qhome;
       export QHOME=$(pwd)/qhome;
       export PATH=$QHOME/$QLIBDIR:$PATH;
-      curl -o q.zip -L $OD;
-      unzip -d qhome q.zip;
+      curl -o qhome/q.zip -L $OD;
+      unzip -d qhome qhome/q.zip;
       rm q.zip;
     else
       echo No kdb+;
