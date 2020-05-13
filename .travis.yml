@@ -11,9 +11,9 @@ before_install:
   - export COVERITY="False"
   - export BUILD="False"
   - if [[ $BUILD == "True" ]]; then
-      export LIB=lib;
+      export LIB="lib";
     else
-      export LIB:=;
+      export LIB="";
     fi
   - if [[ $TRAVIS_OS_NAME == "windows" ]]; then
       export FILE_TAIL="zip";
