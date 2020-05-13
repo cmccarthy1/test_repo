@@ -6,16 +6,16 @@ language: c
 compiler: gcc
 
 before_install:
-  - export FILE_ROOT="prometheus-exporter"		# Front of the name given to the zip/tar files
-  - export TESTS="False"				# Are tests within 'tests/' folder to be run?
-  - export COVERITY="False"				# Is a Coverity scan to be completed?
-  - export BUILD="False"				# Does a compilation of C code need to be completed?
-  - if [[ BUILD == "True" ]]; then			# Add library shared objects to the build
+  - export FILE_ROOT="prometheus-exporter"
+  - export TESTS="False"
+  - export COVERITY="False"
+  - export BUILD="False"
+  - if [[ $BUILD == "True" ]]; then
       export LIB=lib;
     else
       export LIB:=;
     fi
-  - if [[ $TRAVIS_OS_NAME == "windows" ]]; then		# If the file is windows 'zip' otherwise 'tar'
+  - if [[ $TRAVIS_OS_NAME == "windows" ]]; then
       export FILE_TAIL="zip";
     else
       export FILE_TAIL="tgz";
