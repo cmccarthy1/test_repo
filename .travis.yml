@@ -21,7 +21,7 @@ before_install:
       QLIBDIR=m64;OD="mac";
     elif [[ $TESTS == "True" && $TRAVIS_OS_NAME == "windows" ]]; then 
       QLIBDIR=w64; OD="windows";
-    elif [[ $TESTS == "True" ]]
+    elif [[ $TESTS == "True" ]]; then
       echo "unknown OS ('$TRAVIS_OS_NAME')" >&2; exit 1;
     fi
   - if [[ $TESTS == "True" ]]; then
