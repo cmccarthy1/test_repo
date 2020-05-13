@@ -17,7 +17,7 @@ before_install:
     fi
 
   - if [[ $TESTS == "True" && $TRAVIS_OS_NAME == "linux" ]]; then
-      QLIBDIR=l64; OD=;$L64;
+      QLIBDIR=l64; OD=$L64;
     elif [[ $TESTS == "True" && $TRAVIS_OS_NAME == "osx" ]]; then 
       QLIBDIR=m64; OD=$M64;
     elif [[ $TESTS == "True" && $TRAVIS_OS_NAME == "windows" ]]; then 
@@ -32,7 +32,6 @@ before_install:
       export PATH=$QHOME/$QLIBDIR:$PATH;
       curl -o qhome/q.zip -L $OD;
       unzip -d qhome qhome/q.zip;
-      ls qhome;
     else
       echo No kdb+;
     fi
