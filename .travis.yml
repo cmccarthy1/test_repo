@@ -9,7 +9,7 @@ before_install:
   - export FILE_ROOT="prometheus-exporter"
   - export TESTS="False"
   - export COVERITY="False"
-  - export BUILD="False"
+  - export BUILD="True"
   - if [[ $BUILD == "True" ]]; then
       export LIB="lib";
     else
