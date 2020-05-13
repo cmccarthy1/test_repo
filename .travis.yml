@@ -26,10 +26,11 @@ before_install:
     fi
   - if [[ $TESTS == "True" ]]; then
       export QLIBDIR;
-      mkdir q;
-      export QHOME=$(pwd)/q;
+      mkdir qhome;
+      export QHOME=$(pwd)/qhome;
       export PATH=$QHOME/$QLIBDIR:$PATH;
       echo $QHOME;
+      echo $QLIBDIR;
     fi
   - if [[ $TRAVIS_OS_NAME == "windows" ]]; then
       export FILE_TAIL="zip";
