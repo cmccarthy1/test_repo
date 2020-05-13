@@ -7,7 +7,7 @@ compiler: gcc
 
 before_install:
   - export FILE_ROOT="prometheus-exporter"
-  - export TESTS="False"
+  - export TESTS="True"
   - export COVERITY="False"
   - export BUILD="False"
   - if [[ $BUILD == "True" ]]; then
@@ -32,6 +32,7 @@ before_install:
       export PATH=$QHOME/$QLIBDIR:$PATH;
       curl -o qhome/q.zip -L $OD;
       unzip -d qhome qhome/q.zip;
+      ls qhome;
     else
       echo No kdb+;
     fi
