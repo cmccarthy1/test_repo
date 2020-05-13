@@ -7,31 +7,35 @@ compiler: gcc
 
 before_install:
   - export FILE_ROOT="prometheus-exporter"
-  - export TESTS="True"
+  - export TESTS="False"
   - export COVERITY="False"
-  - export BUILD="True"
+  - export BUILD="False"
   - if [[ $BUILD == "True" ]]; then
       export LIB="lib";
     else
       export LIB="";
     fi
+
   - if [[ $TESTS == "True" && $TRAVIS_OS_NAME == "linux" ]]; then
-      QLIBDIR=l64;OD="linux";
+      QLIBDIR=l64; OD=;$L64;
     elif [[ $TESTS == "True" && $TRAVIS_OS_NAME == "osx" ]]; then 
-      QLIBDIR=m64;OD="mac";
+      QLIBDIR=m64; OD=$M64;
     elif [[ $TESTS == "True" && $TRAVIS_OS_NAME == "windows" ]]; then 
-      QLIBDIR=w64; OD="windows";
+      QLIBDIR=w64; OD=$W64;
     elif [[ $TESTS == "True" ]]; then
       echo "unknown OS ('$TRAVIS_OS_NAME')" >&2; exit 1;
     fi
-  - if [[ $TESTS == "True" ]]; then
+  - if [[ $TESTS == "True" && "x$OD" != "x" ]]; then
       export QLIBDIR;
       mkdir qhome;
       export QHOME=$(pwd)/qhome;
       export PATH=$QHOME/$QLIBDIR:$PATH;
-      echo $QHOME;
-      echo $QLIBDIR;
+      curl -o qhome/q.zip -L $OD;
+      unzip -d qhome qhome/q.zip;
+    else
+      echo No kdb+;
     fi
+
   - if [[ $TRAVIS_OS_NAME == "windows" ]]; then
       export FILE_TAIL="zip";
     else
