@@ -15,17 +15,16 @@ before_install:
     else
       export LIB="";
     fi
+  - if [[ $TESTS == "True" && $TRAVIS_OS_NAME == "linux" ]]; then
+      QLIBDIR=l64;OD="linux";
+    elif [[ $TESTS == "True" && $TRAVIS_OS_NAME == "osx" ]]; then 
+      QLIBDIR=m64;OD="mac";
+    elif [[ $TESTS == "True" && $TRAVIS_OS_NAME == "windows" ]]; then 
+      QLIBDIR=w64; OD="windows";
+    elif [[ $TESTS == "True" ]]
+      echo "unknown OS ('$TRAVIS_OS_NAME')" >&2; exit 1;
+    fi
   - if [[ $TESTS == "True" ]]; then
-      if [[ $TRAVIS_OS_NAME == "linux" ]]; then 
-        QLIBDIR=l64;
-        OD="linux";
-      elif [[ $TRAVIS_OS_NAME == "osx" ]]; then 
-        QLIBDIR=m64;
-        OD="mac";
-      elif [[ $TRAVIS_OS_NAME == "windows" ]]; then 
-        QLIBDIR=w64;
-        OD="windows";
-      fi
       export QLIBDIR;
       mkdir q;
       export QHOME=$(pwd)/q;
