@@ -15,7 +15,7 @@ before_install:
       chmod +x travis_setup.sh; 
       ./travis_setup.sh;
       export BUILD_HOME=$TRAVIS_BUILD_DIR/cbuild
-      export LIB="$pwd/cmake/$FILE_ROOT/lib";
+      export LIB="./cmake/$FILE_ROOT/lib";
       mkdir cmake;
     else
       export LIB="";
