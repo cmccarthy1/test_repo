@@ -15,7 +15,7 @@ before_install:
       chmod +x travis_setup.sh; 
       ./travis_setup.sh;
       export BUILD_HOME=$TRAVIS_BUILD_DIR/cbuild
-      export LIB="cmake/lib";
+      export LIB="cmake/$FILE_ROOT/lib";
       mkdir cmake;
     else
       export LIB="";
@@ -68,9 +68,9 @@ script:
       q test.q tests/ -q;
     fi
   - if [ "$TRAVIS_OS_NAME" == "windows" ]; then
-      7z a -tzip $FILE_NAME cmake/$FILE_ROOT/*;
+      7z a -tzip $FILE_NAME README.md LICENSE install.bat q examples $LIB;
     else
-      tar  -zcvf $FILE_NAME cmake/$FILE_ROOT/*;
+      tar  -zcvf $FILE_NAME README.md LICENSE install.sh  q examples $LIB;
     fi
 
 deploy:
