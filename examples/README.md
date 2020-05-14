@@ -1,74 +1,47 @@
-# kdb+ interface for Prometheus-Exporter (Example)
+# kdb+ interface for MQTT (Examples)
 
-The demonstration documented below is outlined in full [here](https://code.kx.com/q/interfaces/prom/exporter/examples). For the purposes of this clarity the following is a summary.
+The demonstration documented below provides users with a simple example of interfacing kdb+ with the MQTT messaging protocol.
 
 ## Requirements
-This demonstration requires a Docker instance capable of running a Unix based container e.g. Docker Desktop for Mac/Linux/Windows 19 Pro with internet access
 
-## Setup
+It is assumed that the user has installed the `mqtt.so` or `mqtt.dll` binary in `$QHOME/[wlm](32|64)`, following the instructions outlined [here](../README.md)
 
-Start a q session locally on port 8080, running `exporter.q` from this folder via the command
+This demonstration requires that a MQTT broker is running on port 1883. This is the default running port for a Mosquitto broker running locally. You can install a local MQTT instance from Mosquitto by following the instructions [here](https://mosquitto.org/download/). This can be connected to locally or from a docker container (updating the connection address as appropriate).
 
-```bash
-q ../exporter.q -p 8080
-```
+## Example
 
-This will expose the metrics associated with this process on port 8080 for consumption by Prometheus.
-
-Initialize a docker environment containing a pre-configured Prometheus and Grafana setup from within the `DockerCompose` folder via
-
-**Windows/MacOS**
-
-Initialize the docker instance
+* The following shows the initialization of the example script and expected output.
 
 ```
-docker-compose up
+$ q producer.q
+
+Type `\t 100` to publish a message every 100ms up to 200 messages, to stop type `\t 0`
+q)\t 100
+q)(`msgsent;1)
+(`msgsent;2)
+(`msgsent;3)
+(`msgsent;4)
+
+// Stop the producer
+q)\t 0
 ```
 
-When finished running the demonstration stop the process using `ctrl-c` or run
+* The following code block shows the expected behaviour when a consumer is listening to the port supplied by the above producer using the `consumer.q` script
 
 ```
-docker-compose down
+$ q consumer.q
+
+q)"Message received"
+"Message received"
+"Message received"
+"Message received"
+
+// Interrogate the table being serviced by the example script
+q).mqtt.tab
+topic  msg_sent                      msg_recv                      received_m..
+-----------------------------------------------------------------------------..
+topic1 2020.04.24D09:03:06.719866000 2020.04.24D09:03:06.721215000 topic1_0  ..
+topic2 2020.04.24D09:03:06.720178000 2020.04.24D09:03:06.824406000 topic2_0  ..
+topic1 2020.04.24D09:03:06.823581000 2020.04.24D09:03:06.924166000 topic1_1  ..
+topic2 2020.04.24D09:03:06.923756000 2020.04.24D09:03:07.025692000 topic2_1  ..
 ```
-
-**Linux**
-
-Initialize the docker instance
-
-```
-docker-compose -f docker-compose-linux.yml up
-```
-
-Run the following when the environment is to be stopped
-
-```
-docker-compose -f docker-compose-linux.yml down
-```
-
-## Example resource Utilization
-
-Provided with the interface is the script `kdb_user_example.q`. This can be used to show an example of resources being consumed and monitored using Prometheus. The script will connect to the q session running on port 8080 as outlined above and attempt to use resources in a number of ways
-
-```
-q kdb_user_example.q
-```
-
-## Accessing Prometheus and Grafana
-
-Once the docker instance has been initialised Prometheus and Grafana should be running on the following ports
-
-- Prometheus = http://localhost:9090
-- Grafana = http://localhost:3000
-
-On the Prometheus front end you can monitor specific metrics as desired. Executing `up` for example will allow a user to check that the exporter is 'up'. If the demo is running correctly this will be '1' for your configured kdb+ instance.
-
-To log into Grafana on port 3000 use the following credentials
-
-- Username = admin
-- Password = pass
-
-Once logged in a pre-configured dashboard named kdb+ should be available from the `Home` dropdown. This will give an example of monitoring which can be be completed using the interface but is by no means exhaustive
-
-The following is an example of a generated dashboard from the above workflow
-
-![Grafana](grafana.png)
