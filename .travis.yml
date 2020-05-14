@@ -16,15 +16,9 @@ before_install:
       ./travis_setup.sh;
       export BUILD_HOME=$TRAVIS_BUILD_DIR/cbuild
       export LIB="lib";
+      mkdir cmake;
     else
       export LIB="";
-    fi
-
-  # Make binaries for the library as appropriate
-  - if [[ $BUILD == "True" && $TRAVIS_OS_NAME == "windows" ]]; then
-      cd cbuild && cmake -G "Visual Studio 15 2017 Win64" .. ;
-    elif [[ $BUILD == "True" && $TRAVIS_OS_NAME == "linux" || $TRAVIS_OS_NAME == "osx" ]]; then
-      cd cbuild && cmake .. ;
     fi
 
   # Define location to get kdb+ [MLW](64) address to curl from and dir
@@ -59,14 +53,21 @@ before_install:
     fi
   - export FILE_NAME=$FILE_ROOT-$TRAVIS_OS_NAME-$TRAVIS_BRANCH.$FILE_TAIL
 
+  # Make binaries for the library as appropriate
+  - if [[ $BUILD == "True" && $TRAVIS_OS_NAME == "windows" ]]; then
+      cd cmake && cmake -G "Visual Studio 15 2017 Win64" .. && cd ..;
+    elif [[ $BUILD == "True" && $TRAVIS_OS_NAME == "linux" || $TRAVIS_OS_NAME == "osx" ]]; then
+      cd cmake && cmake .. && cd ..;
+    fi
+
 script:
   - if [[ $TESTS == "True" && "x$OD" != "x" && "x$QLIC_KC" != "x" ]]; then
       q test.q tests/ -q;
     fi
   - if [ "$TRAVIS_OS_NAME" == "windows" ]; then
-      7z a -tzip $FILE_NAME README.md install.bat  LICENSE q examples $LIB;
+      7z a -tzip cmake/$FILE_ROOT/$FILE_NAME README.md install.bat LICENSE q examples $LIB;
     else
-      tar  -zcvf $FILE_NAME README.md install.sh LICENSE q examples $LIB;
+      tar  -zcvf cmake/$FILE_ROOT/$FILE_NAME README.md install.sh  LICENSE q examples $LIB;
     fi
 
 deploy:
