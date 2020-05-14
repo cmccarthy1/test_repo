@@ -6,16 +6,28 @@ language: c
 compiler: gcc
 
 before_install:
-  - export FILE_ROOT="prometheus-exporter"
+  - export FILE_ROOT="mqtt"
   - export TESTS="False"
-  - export BUILD="False"
+  - export BUILD="True"
+
+  # Run instructions to install the C/C++ requirements (BUILD_HOME) set in place of PAHO_HOME/HDF5_HOME etc.
   - if [[ $BUILD == "True" ]]; then
       chmod +x travis_setup.sh; 
       ./travis_setup.sh;
+      export BUILD_HOME=$(pwd)/build
       export LIB="lib";
+      mkdir cmake;
     else
       export LIB="";
     fi
+
+  # Make binaries for the library as appropriate
+  - if [[ $BUILD == "True" && $TRAVIS_OS_NAME == "windows"]]; then
+      cd cmake && cmake -G "Visual Studio 15 2017 Win64" ..;
+    elif [[ $BUILD == "True" && $TRAVIS_OS_NAME == "linux" || $TRAVIS_OS_NAME == "osx"]]; then
+      cd cmake && cmake ..
+    fi
+
   # Define location to get kdb+ [MLW](64) address to curl from and dir
   - if [[ $TESTS == "True" && $TRAVIS_OS_NAME == "linux" ]]; then
       QLIBDIR=l64; OD=$L64;
@@ -26,6 +38,7 @@ before_install:
     elif [[ $TESTS == "True" ]]; then
       echo "unknown OS ('$TRAVIS_OS_NAME')" >&2; exit 1;
     fi
+
   # Set up q for testing and execute tests on multiple 
   - if [[ $TESTS == "True" && "x$OD" != "x" && "x$QLIC_KC" != "x" ]]; then
       export QLIBDIR;
