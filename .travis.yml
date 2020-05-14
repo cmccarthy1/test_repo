@@ -7,15 +7,16 @@ compiler: gcc
 
 before_install:
   - export FILE_ROOT="prometheus-exporter"
-  - export TESTS="True"
-  - export COVERITY="False"
+  - export TESTS="False"
   - export BUILD="False"
   - if [[ $BUILD == "True" ]]; then
+      chmod +x travis_setup.sh; 
+      ./travis_setup.sh;
       export LIB="lib";
     else
       export LIB="";
     fi
-
+  # Define location to get kdb+ [MLW](64) address to curl from and dir
   - if [[ $TESTS == "True" && $TRAVIS_OS_NAME == "linux" ]]; then
       QLIBDIR=l64; OD=$L64;
     elif [[ $TESTS == "True" && $TRAVIS_OS_NAME == "osx" ]]; then 
@@ -25,7 +26,8 @@ before_install:
     elif [[ $TESTS == "True" ]]; then
       echo "unknown OS ('$TRAVIS_OS_NAME')" >&2; exit 1;
     fi
-  - if [[ $TESTS == "True" && "x$OD" != "x" ]]; then
+  # Set up q for testing and execute tests on multiple 
+  - if [[ $TESTS == "True" && "x$OD" != "x" && "x$QLIC_KC" != "x" ]]; then
       export QLIBDIR;
       mkdir qhome;
       export QHOME=$(pwd)/qhome;
@@ -33,10 +35,11 @@ before_install:
       curl -o qhome/q.zip -L $OD;
       unzip -d qhome qhome/q.zip;
       rm qhome/q.zip;
+      echo -n $QLIC_KC |base64 --decode > qhome/kc.lic;
+      curl -fsSL -o test.q https://github.com/KxSystems/embedpy/raw/master/test.q;
     else
-      echo No kdb+;
+      echo No kdb+, no tests;
     fi
-
   - if [[ $TRAVIS_OS_NAME == "windows" ]]; then
       export FILE_TAIL="zip";
     else
@@ -45,10 +48,13 @@ before_install:
   - export FILE_NAME=$FILE_ROOT-$TRAVIS_OS_NAME-$TRAVIS_BRANCH.$FILE_TAIL
 
 script:
+  - if [[ $TESTS == "True" && "x$OD" != "x" && "x$QLIC_KC" != "x" ]]; then
+      q test.q tests/ -q;
+    fi
   - if [ "$TRAVIS_OS_NAME" == "windows" ]; then
-      7z a -tzip $FILE_NAME README.md q LICENSE examples $LIB;
+      7z a -tzip $FILE_NAME README.md install.bat  LICENSE q examples $LIB;
     else
-      tar  -zcvf $FILE_NAME README.md q LICENSE examples $LIB;
+      tar  -zcvf $FILE_NAME README.md install.sh LICENSE q examples $LIB;
     fi
 
 deploy:
