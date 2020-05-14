@@ -68,14 +68,14 @@ script:
   - if [[ $TESTS == "True" && "x$OD" != "x" && "x$QLIC_KC" != "x" ]]; then
       q test.q tests/ -q;
     fi
-  - if [[ "$TRAVIS_OS_NAME" == "windows" && $BUILD == "False" ]]; then
+  - if [[ $TRAVIS_OS_NAME == "windows" && $BUILD == "False" ]]; then
       7z a -tzip $FILE_NAME README.md LICENSE install.bat q examples;
-    elif [[ ("$TRAVIS_OS_NAME" == "linux" || "$TRAVIS_OS_NAME" == "osx" ) && $BUILD == "False" ]]; then
+    elif [[ $TRAVIS_OS_NAME == "linux" || "$TRAVIS_OS_NAME" == "osx" ) && $BUILD == "False" ]]; then
       tar  -zcvf $FILE_NAME README.md LICENSE install.sh  q examples;
-    elif [[ "$TRAVIS_OS_NAME" == "windows" && $BUILD == "True" ]]; then
-      cd cmake; 7z a -tzip $FILE_NAME $FILE_ROOT; mv $FILE_NAME ..; cd ..;
-    elif [[ ("$TRAVIS_OS_NAME" == "linux" || "$TRAVIS_OS_NAME" == "osx" ) && $BUILD == "True" ]]; then
-      cd cmake; tar  -zcvf $FILE_NAME $FILE_ROOT; mv $FILE_NAME ..; cd ..;
+    elif [[ $TRAVIS_OS_NAME == "windows" && $BUILD == "True" ]]; then
+      cd cmake; 7z a -tzip $FILE_NAME $FILE_ROOT; mv $FILE_NAME .. ; cd .. ;
+    elif [[ ($TRAVIS_OS_NAME == "linux" || $TRAVIS_OS_NAME == "osx" ) && $BUILD == "True" ]]; then
+      cd cmake; tar  -zcvf $FILE_NAME $FILE_ROOT; mv $FILE_NAME .. ; cd .. ;
     fi
 
 deploy:
