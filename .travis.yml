@@ -15,7 +15,7 @@ before_install:
       chmod +x travis_setup.sh; 
       ./travis_setup.sh;
       export BUILD_HOME=$TRAVIS_BUILD_DIR/cbuild
-      export LIB=cmake/$FILE_ROOT/lib;
+      export BUILD_OUTPUT=cmake/$FILE_ROOT;
       mkdir cmake;
     else
       export LIB="";
@@ -59,27 +59,29 @@ before_install:
       export MSBUILD_PATH="/c/Program Files (x86)/Microsoft Visual Studio/2017/BuildTools/MSBuild/15.0/Bin/";
       export PATH=$PATH:$MSBUILD_PATH;
       MSBuild.exe INSTALL.vcxproj //m //nologo //verbosity:normal //p:Configuration=Release //p:Platform=x64;
-      cd ..; mdkir lib; cp $LIB/* lib;
+      cd ..;
     elif [[ $BUILD == "True" && ( $TRAVIS_OS_NAME == "linux" || $TRAVIS_OS_NAME == "osx" ) ]]; then
       cd cmake && cmake .. && make install && cd .. ;
-      mdkir lib; cp $LIB/* lib;
     fi
 
 script:
   - if [[ $TESTS == "True" && "x$OD" != "x" && "x$QLIC_KC" != "x" ]]; then
       q test.q tests/ -q;
     fi
-  - if [ "$TRAVIS_OS_NAME" == "windows" ]; then
-      mkdir lib; cp $LIB/* lib;
-      7z a -tzip $FILE_NAME README.md LICENSE install.bat q examples lib;
-    else
-      tar  -zcvf $FILE_NAME README.md LICENSE install.sh  q examples lib;
+  - if [[ "$TRAVIS_OS_NAME" == "windows" && $BUILD =="False" ]]; then
+      7z a -tzip $FILE_NAME README.md LICENSE install.bat q examples;
+    elif [[ ("$TRAVIS_OS_NAME" == "linux" || "$TRAVIS_OS_NAME" == "osx" ) && $BUILD =="False" ]]; then
+      tar  -zcvf $FILE_NAME README.md LICENSE install.sh  q examples;
+    elif [[ "$TRAVIS_OS_NAME" == "windows" && $BUILD =="True" ]]; then
+      cd cmake; 7z a -tzip $FILE_NAME $FILE_ROOT;
+    elif [[ ("$TRAVIS_OS_NAME" == "linux" || "$TRAVIS_OS_NAME" == "osx" ) && $BUILD =="True" ]]; then
+      cd cmake; tar  -zcvf $FILE_NAME $FILE_ROOT;
     fi
 
 deploy:
   provider: releases
   api_key: "$GITHUB_APIKEY"
-  file: "$FILE_NAME"
+  file: "cmake/$FILE_NAME"
   on:
     tags: true
   skip_cleanup: 'true'
