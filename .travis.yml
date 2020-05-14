@@ -16,16 +16,15 @@ before_install:
       ./travis_setup.sh;
       export BUILD_HOME=$TRAVIS_BUILD_DIR/cbuild
       export LIB="lib";
-      mkdir cmake;
     else
       export LIB="";
     fi
 
   # Make binaries for the library as appropriate
   - if [[ $BUILD == "True" && $TRAVIS_OS_NAME == "windows" ]]; then
-      cd cmake && cmake -G "Visual Studio 15 2017 Win64" .. ;
+      cd cbuild && cmake -G "Visual Studio 15 2017 Win64" .. ;
     elif [[ $BUILD == "True" && $TRAVIS_OS_NAME == "linux" || $TRAVIS_OS_NAME == "osx" ]]; then
-      cd cmake && cmake .. ;
+      cd cbuild && cmake .. ;
     fi
 
   # Define location to get kdb+ [MLW](64) address to curl from and dir
