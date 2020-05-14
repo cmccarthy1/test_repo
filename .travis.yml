@@ -60,7 +60,7 @@ before_install:
       MSBuild.exe INSTALL.vcxproj //m //nologo //verbosity:normal //p:Configuration=Release //p:Platform=x64;
       cd ..;
     elif [[ $BUILD == "True" && ( $TRAVIS_OS_NAME == "linux" || $TRAVIS_OS_NAME == "osx" ) ]]; then
-      cd cmake && cmake .. && make install && cd ..;
+      cd cmake && cmake .. && make install && cd .. && ls;
     fi
 
 script:
