@@ -15,7 +15,7 @@ before_install:
       chmod +x travis_setup.sh; 
       ./travis_setup.sh;
       export BUILD_HOME=$TRAVIS_BUILD_DIR/cbuild
-      export BUILD_OUTPUT=cmake/$FILE_ROOT;
+      export BUILD_OUTPUT=cmake/$FILE_ROOT/lib;
       mkdir cmake;
     else
       export LIB="";
@@ -68,14 +68,10 @@ script:
   - if [[ $TESTS == "True" && "x$OD" != "x" && "x$QLIC_KC" != "x" ]]; then
       q test.q tests/ -q;
     fi
-  - if [[ $TRAVIS_OS_NAME == "windows" && $BUILD == "False" ]]; then
-      7z a -tzip $FILE_NAME README.md LICENSE install.bat q examples;
-    elif [[ $TRAVIS_OS_NAME == "linux" || "$TRAVIS_OS_NAME" == "osx" ) && $BUILD == "False" ]]; then
-      tar  -zcvf $FILE_NAME README.md LICENSE install.sh  q examples;
-    elif [[ $TRAVIS_OS_NAME == "windows" && $BUILD == "True" ]]; then
-      cd cmake; 7z a -tzip $FILE_NAME $FILE_ROOT; mv $FILE_NAME .. ; cd .. ;
-    elif [[ ($TRAVIS_OS_NAME == "linux" || $TRAVIS_OS_NAME == "osx" ) && $BUILD == "True" ]]; then
-      cd cmake; tar  -zcvf $FILE_NAME $FILE_ROOT; mv $FILE_NAME .. ; cd .. ;
+  - if [[ $TRAVIS_OS_NAME == "windows" ]]; then
+      7z x -tzip $FILE_NAME README.md LICENSE install.bat q examples $BUILD_OUTPUT;
+    else  
+      tar  -zcvf $FILE_NAME README.md LICENSE install.sh  q examples -C $BUILD_OUTPUT .;
     fi
 
 deploy:
