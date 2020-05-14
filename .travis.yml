@@ -23,9 +23,9 @@ before_install:
 
   # Make binaries for the library as appropriate
   - if [[ $BUILD == "True" && $TRAVIS_OS_NAME == "windows"]]; then
-      cd cmake && cmake -G "Visual Studio 15 2017 Win64" ..;
+      cd cmake && cmake -G "Visual Studio 15 2017 Win64" .. && echo "windows build successful";
     elif [[ $BUILD == "True" && $TRAVIS_OS_NAME == "linux" || $TRAVIS_OS_NAME == "osx"]]; then
-      cd cmake && cmake ..;
+      cd cmake && cmake .. && echo "$TRAVIS_OS_NAME build successful";
     fi
 
   # Define location to get kdb+ [MLW](64) address to curl from and dir
