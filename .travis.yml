@@ -15,7 +15,7 @@ before_install:
       chmod +x travis_setup.sh; 
       ./travis_setup.sh;
       export BUILD_HOME=$TRAVIS_BUILD_DIR/cbuild
-      export LIB="./cmake/$FILE_ROOT/lib";
+      export LIB="cmake/lib";
       mkdir cmake;
     else
       export LIB="";
@@ -60,7 +60,7 @@ before_install:
       MSBuild.exe INSTALL.vcxproj //m //nologo //verbosity:normal //p:Configuration=Release //p:Platform=x64;
       cd ..;
     elif [[ $BUILD == "True" && ( $TRAVIS_OS_NAME == "linux" || $TRAVIS_OS_NAME == "osx" ) ]]; then
-      cd cmake && cmake .. && make install && pwd && ls && cd .. && ls;
+      cd cmake && cmake .. && make install && pwd && ls mqtt && cd .. && ls;
     fi
 
 script:
@@ -70,7 +70,6 @@ script:
   - if [ "$TRAVIS_OS_NAME" == "windows" ]; then
       7z a -tzip $FILE_NAME README.md install.bat LICENSE q examples $LIB;
     else
-      pwd;
       tar  -zcvf $FILE_NAME README.md install.sh  LICENSE q examples $LIB;
     fi
 
