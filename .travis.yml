@@ -69,7 +69,7 @@ script:
       q test.q tests/ -q;
     fi
   - if [[ $TRAVIS_OS_NAME == "windows" && $BUILD == "True" ]]; then
-      7z x -tzip $FILE_NAME cmake/$FILE_ROOT;
+      7z a -tzip $FILE_NAME cmake/$FILE_ROOT;
     elif [[ $BUILD == "True" && ( $TRAVIS_OS_NAME == "linux" || $TRAVIS_OS_NAME == "osx" ) ]]; then  
       tar  -zcvf $FILE_NAME -C cmake/$FILE_ROOT .;
     elif [[ $TRAVIS_OS_NAME == "windows" ]]; then
