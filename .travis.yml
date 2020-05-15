@@ -3,7 +3,9 @@ os:
   - osx
   - windows
 language: c
-compiler: gcc
+compiler: 
+  - gcc
+  - clang
 
 before_install:
   - export FILE_ROOT="mqtt"
