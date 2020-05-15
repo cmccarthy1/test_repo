@@ -39,8 +39,7 @@ before_install:
       mkdir qhome;
       export QHOME=$(pwd)/qhome;
       export PATH=$QHOME/$QLIBDIR:$PATH;
-      export LD_LIBRARY_PATH=$BUILD_HOME/lib:$LD_LIBRARY_PATH;
-      export DYLD_LIBRARY_PATH=$BUILD_HOME/lib:$LD_LIBRARY_PATH;
+      cp $BUILD_HOME/lib/* $QHOME/$QLIBDIR;
       curl -o qhome/q.zip -L $OD;
       unzip -d qhome qhome/q.zip;
       rm qhome/q.zip;
