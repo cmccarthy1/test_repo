@@ -34,7 +34,6 @@ before_install:
 
   # Set up q for testing and execute tests on multiple 
   - if [[ $TESTS == "True" && "x$OD" != "x" && "x$QLIC_KC" != "x" ]]; then
-      export CMAKE_TYPE="TestRelease";
       export QLIBDIR;
       mkdir qhome;
       export QHOME=$(pwd)/qhome;
@@ -48,7 +47,6 @@ before_install:
       rm qhome/q.zip;
       echo -n $QLIC_KC |base64 --decode > qhome/kc.lic;
     else
-      export CMAKE_TYPE="Release";
       echo No kdb+, no tests;
     fi
   - if [[ $TRAVIS_OS_NAME == "windows" ]]; then
@@ -60,13 +58,13 @@ before_install:
 
   # Make binaries for the library as appropriate
   - if [[ $BUILD == "True" && $TRAVIS_OS_NAME == "windows" ]]; then
-      cd cmake && cmake -DCMAKE_BUILD_TYPE=${CMAKE_TYPE} -G "Visual Studio 15 2017 Win64" .. ;
+      cd cmake && cmake -G "Visual Studio 15 2017 Win64" .. ;
       export MSBUILD_PATH="/c/Program Files (x86)/Microsoft Visual Studio/2017/BuildTools/MSBuild/15.0/Bin/";
       export PATH=$MSBUILD_PATH:$PATH;
-      MSBuild.exe INSTALL.vcxproj //m //nologo //verbosity:normal //p:Configuration=${CMAKE_TYPE} //p:Platform=x64;
+      MSBuild.exe INSTALL.vcxproj //m //nologo //verbosity:normal //p:Configuration=Release //p:Platform=x64;
       cd ..;
     elif [[ $BUILD == "True" && ( $TRAVIS_OS_NAME == "linux" || $TRAVIS_OS_NAME == "osx" ) ]]; then
-      cd cmake && cmake .. -DCMAKE_BUILD_TYPE=${CMAKE_TYPE} && make install && cd .. ;
+      cd cmake && cmake .. -DCMAKE_BUILD_TYPE=Release && make install && cd .. ;
     fi
 
 script:
