@@ -43,7 +43,6 @@ before_install:
       unzip -d qhome qhome/q.zip;
       rm qhome/q.zip;
       echo -n $QLIC_KC |base64 --decode > qhome/kc.lic;
-      curl -fsSL -o test.q https://github.com/KxSystems/embedpy/raw/master/test.q;
     else
       export CMAKE_TYPE="Release";
       echo No kdb+, no tests;
