@@ -8,7 +8,7 @@ compiler: gcc
 before_install:
   - export FILE_ROOT="mqtt"
   - export TESTS="False"
-  - export BUILD="False"
+  - export BUILD="True"
 
   # Run instructions to install the C/C++ requirements (BUILD_HOME) set in place of PAHO_HOME/HDF5_HOME etc.
   - if [[ $BUILD == "True" ]]; then
@@ -55,13 +55,13 @@ before_install:
 
   # Make binaries for the library as appropriate
   - if [[ $BUILD == "True" && $TRAVIS_OS_NAME == "windows" ]]; then
-      cd cmake && cmake -G "Visual Studio 15 2017 Win64" .. ;
+      cd cmake && cmake -DCMAKE_BUILD_TYPE=Release -G "Visual Studio 15 2017 Win64" .. ;
       export MSBUILD_PATH="/c/Program Files (x86)/Microsoft Visual Studio/2017/BuildTools/MSBuild/15.0/Bin/";
       export PATH=$PATH:$MSBUILD_PATH;
       MSBuild.exe INSTALL.vcxproj //m //nologo //verbosity:normal //p:Configuration=Release //p:Platform=x64;
       cd ..;
     elif [[ $BUILD == "True" && ( $TRAVIS_OS_NAME == "linux" || $TRAVIS_OS_NAME == "osx" ) ]]; then
-      cd cmake && cmake .. && make install && cd .. ;
+      cd cmake && cmake .. -DCMAKE_BUILD_TYPE=Release && make install && cd .. ;
     fi
 
 script:

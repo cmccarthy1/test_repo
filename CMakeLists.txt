@@ -1,17 +1,28 @@
-cmake_minimum_required(VERSION 2.8)
-project(mqtt C)
+if(NOT DEFINED ENV{BUILD_HOME})
+	message(FATAL_ERROR "BUILD_HOME must be set to the location of your installed C api repository")
+endif()
 
-set (CMAKE_BUILD_TYPE Release)
+if(NOT CMAKE_BUILD_TYPE)
+	set(CMAKE_BUILD_TYPE MinSizeRel)
+endif()
+
+if(NOT QLIB_NAME)
+	set(QLIB_NAME mqtt)
+endif()
+
+cmake_minimum_required(VERSION 2.8)
+project(QLIB_NAME C)
+
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -DKXVER=3")
 set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -DKXVER=3")
 
-set(MY_LIBRARY_NAME mqtt)
+set(MY_LIBRARY_NAME ${QLIB_NAME})
 file(GLOB SRC_FILES src/mqtt.c) # Do not add 'socket_pair.c' since it gets included
 set_source_files_properties(${SRC_FILES} PROPERTIES LANGUAGE C)
 
 message(STATUS "Generator : ${CMAKE_GENERATOR}")
 message(STATUS "Build Tool : ${CMAKE_BUILD_TOOL}")
-message(STATUS "Paho MQTT API : $ENV{BUILD_HOME}")
+message(STATUS "C API : $ENV{BUILD_HOME}")
 
 include_directories (
     $ENV{BUILD_HOME}/include 
@@ -55,12 +66,30 @@ add_library (${MY_LIBRARY_NAME} SHARED ${SRC_FILES})
 IF(APPLE)
    set_target_properties(${MY_LIBRARY_NAME} PROPERTIES LINK_FLAGS "-undefined dynamic_lookup")
    set_target_properties(${MY_LIBRARY_NAME} PROPERTIES SUFFIX .so)
+   set(INSTALL_SCRIPT "install.sh")
+   set(OSFLAG=m)
+elseif(WIN32)
+   set(INSTALL_SCRIPT "install.bat")
+   set(OSFLAG=w)
+else()
+   set(INSTALL_SCRIPT "install.sh")
+   set(OSFLAG=l)
 endif()
 
 target_link_libraries(${MY_LIBRARY_NAME} ${MQTT3A_LIBRARY} ${MQTT3AS_LIBRARY} ${MQTT3C_LIBRARY} ${MQTT3CS_LIBRARY} ${LINK_LIBS})
 set_target_properties(${MY_LIBRARY_NAME} PROPERTIES PREFIX "")
 
-install(FILES README.md LICENSE ${INSTALL_SCRIPT} DESTINATION ${PROJECT_BINARY_DIR}/mqtt/)
-install(DIRECTORY examples DESTINATION ${PROJECT_BINARY_DIR}/mqtt)
-install(DIRECTORY q DESTINATION ${PROJECT_BINARY_DIR}/mqtt)
-install(TARGETS ${MY_LIBRARY_NAME} DESTINATION ${PROJECT_BINARY_DIR}/mqtt/lib OPTIONAL)
+# Check if 32-bit/64-bit machine
+set(BITNESS 32)
+if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+  set(BITNESS 64)
+endif()
+
+# Minimum build/install move binary and q-script to $QHOME & $QHOME/<QARCH>
+install(TARGETS ${MY_LIBRARY_NAME} DESTINATION "$ENV{QHOME}/${OSFLAG}${BITNESS}/" CONFIGURATIONS MinSizeRel Release)
+install(DIRECTORY "q/" DESTINATION "$ENV{QHOME}" CONFIGURATIONS MinSizeRel Release FILES_MATCHING PATTERN "*.q")
+
+install(FILES README.md LICENSE ${INSTALL_SCRIPT} DESTINATION ${PROJECT_BINARY_DIR}/mqtt/ CONFIGURATIONS Release)
+install(DIRECTORY examples DESTINATION ${PROJECT_BINARY_DIR}/mqtt CONFIGURATIONS Release)
+install(DIRECTORY q DESTINATION ${PROJECT_BINARY_DIR}/mqtt CONFIGURATIONS Release)
+install(TARGETS ${MY_LIBRARY_NAME} DESTINATION ${PROJECT_BINARY_DIR}/mqtt/lib CONFIGURATIONS Release)
